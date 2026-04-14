@@ -6,7 +6,7 @@ pipeline {
             steps {
                 slackSend(
                     channel: "#build-logs",
-                    tokenCredentialId: "slack-webhook",
+                    tokenCredentialId: "Slack-webhook",
                     message: "🚀 Build started for ${env.JOB_NAME}"
                 )
             }
@@ -24,14 +24,14 @@ pipeline {
         success {
             slackSend(
                 channel: "#build-logs",
-                tokenCredentialId: "slack-webhook",
+                tokenCredentialId: "Slack-webhook",
                 message: "✅ Build SUCCESS: ${env.JOB_NAME}"
             )
         }
         failure {
             slackSend(
                 channel: "#build-logs",
-                tokenCredentialId: "slack-webhook",
+                tokenCredentialId: "Slack-webhook",
                 message: "❌ Build FAILED: ${env.JOB_NAME}"
             )
         }
