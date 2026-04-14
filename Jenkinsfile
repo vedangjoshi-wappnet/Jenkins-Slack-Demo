@@ -4,11 +4,13 @@ pipeline {
     stages {
         stage('Notify Start') {
             steps {
-                slackSend(
-                    channel: "#build-logs",
-                    tokenCredentialId: "Slack-webhook",
-                    message: "🚀 Build started for ${env.JOB_NAME}"
-                )
+                withCredentials([string(credentialsId: 'Slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+                    sh """
+                    curl -X POST -H 'Content-type: application/json' \
+                    --data '{"text":"🚀 Build started for ${env.JOB_NAME}"}' \
+                    $SLACK_WEBHOOK
+                    """
+                }
             }
         }
 
@@ -22,18 +24,22 @@ pipeline {
 
     post {
         success {
-            slackSend(
-                channel: "#build-logs",
-                tokenCredentialId: "Slack-webhook",
-                message: "✅ Build SUCCESS: ${env.JOB_NAME}"
-            )
+            withCredentials([string(credentialsId: 'Slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+                sh """
+                curl -X POST -H 'Content-type: application/json' \
+                --data '{"text":"✅ Build SUCCESS: ${env.JOB_NAME}"}' \
+                $SLACK_WEBHOOK
+                """
+            }
         }
         failure {
-            slackSend(
-                channel: "#build-logs",
-                tokenCredentialId: "Slack-webhook",
-                message: "❌ Build FAILED: ${env.JOB_NAME}"
-            )
+            withCredentials([string(credentialsId: 'Slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+                sh """
+                curl -X POST -H 'Content-type: application/json' \
+                --data '{"text":"❌ Build FAILED: ${env.JOB_NAME}"}' \
+                $SLACK_WEBHOOK
+                """
+            }
         }
     }
 }
